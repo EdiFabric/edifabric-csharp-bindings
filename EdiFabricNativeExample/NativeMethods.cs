@@ -80,8 +80,8 @@ internal static unsafe class NativeMethods
 
     /* Licensing */
 
-    [DllImport(LibraryName, EntryPoint = "install_license", CallingConvention = CallingConvention.Cdecl)]
-    internal static extern int InstallLicense(byte* serial, int serialLength);
+    [DllImport(LibraryName, EntryPoint = "ensure_token", CallingConvention = CallingConvention.Cdecl)]
+    internal static extern int EnsureToken(byte* serial, int serialLength, int seconds);
 
     [DllImport(LibraryName, EntryPoint = "get_app_version", CallingConvention = CallingConvention.Cdecl)]
     internal static extern int GetAppVersion(int* appVersion);

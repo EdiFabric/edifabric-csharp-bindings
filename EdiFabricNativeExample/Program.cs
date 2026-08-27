@@ -102,10 +102,10 @@ internal static class Program
         Console.WriteLine($"  init_logger -> logging to {logPath}");
     }
 
-    /// <summary>install_license, get_token, validate_token, set_token, get_token_expiration, set_serial</summary>
+    /// <summary>ensure_token, get_token, validate_token, set_token, get_token_expiration, set_serial</summary>
     private static void DemoLicensing(string serial)
     {
-        Section("Licensing: install_license, get_token, validate_token, set_token, set_serial");
+        Section("Licensing: ensure_token, get_token, validate_token, set_token, set_serial");
         //  For the free and developer plans only set_serial must be used. Tokens are only available for the Enterprise plan.
 
         EdiFabricX12.SetSerial(serial);

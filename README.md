@@ -174,7 +174,7 @@ non-zero status. Buffer growth (`InsufficientCapacity`) is retried automatically
 | --- | --- |
 | Loading | `Load`, `LibraryPath`, `ResolvedLibraryPath` |
 | Lifecycle | `InitLogger`, `ShutdownLogger`, `ClearCache` |
-| Licensing | `InstallLicense`, `GetAppVersion`, `GetToken`, `ValidateToken`, `SetToken`, `GetTokenExpiration`, `GetTokenExpirationTicks`, `SetSerial` |
+| Licensing | `EnsureToken`, `GetAppVersion`, `GetToken`, `ValidateToken`, `SetToken`, `GetTokenExpiration`, `GetTokenExpirationTicks`, `SetSerial` |
 | Model map | `SetMap` |
 | Processing | `Parse`, `StartSplit`, `Split`, `Build`, `StartMerge`, `Merge`, `GetResult` |
 | Errors | `GetError`, `FreeError`, `Check` |
@@ -188,8 +188,9 @@ do not export `free_error` fall back to `Marshal.FreeHGlobal`.
 ## Licensing
 
 > [!NOTE]
-> The examples are available with a free plan which can be used only with Serial model validation. 
-> You don't need to call `install_license` with the free plan, and the only licensing call must be `set_serial`.
+> The examples are available with a free plan which can be used only with Serial model validation.
+> Tokens are only available for the Enterprise plan. For the free and developer plans, the only
+> licensing call must be `set_serial`.
 
 The serial key for the free plan is:
 ```
@@ -200,17 +201,18 @@ Two models are supported. Tokens are recommended for containers, air-gapped
 machines, and high volume; serials are simplest when always online.
 
 ```csharp
-// Token: fetch once with internet access, cache it, set it at process start
-var token = EdiFabricX12.GetToken(serial);
-EdiFabricX12.SetToken(token);
+// Token (Enterprise): keep a cached token fresh; refreshes if it expires within N seconds
+EdiFabricX12.EnsureToken(serial, seconds: 3600);
 Console.WriteLine(EdiFabricX12.GetTokenExpiration());   // DateTime, or null when unset
 
-// Serial: register the machine once, then authorize per process
-EdiFabricX12.InstallLicense(serial);
+// Or fetch / validate / set a token yourself
+var token = EdiFabricX12.GetToken(serial);
+EdiFabricX12.ValidateToken(token);
+EdiFabricX12.SetToken(token);
+
+// Serial (free / developer): authorize per process against the license server
 EdiFabricX12.SetSerial(serial);
 ```
-
-The example caches its token in `.edifabric-token` next to the executable.
 
 ## Model map
 
@@ -327,7 +329,7 @@ are exposed as `EdiFabricErrorCode`, and `GetError(code)` returns the message.
 | 626 | `Merge` called before `StartMerge` |
 | 627 | Incorrect or null output pointer |
 | 628 | Incorrect serial |
-| 629 | License not installed, run `InstallLicense` |
+| 629 | License not installed; call `EnsureToken` or `SetToken` |
 | 630 | Application maximum version exceeded |
 | 631 | Token expired |
 | 632 | Token missing |
@@ -345,8 +347,8 @@ resets the map, so reload it afterwards.
 
 **Error 635 on parse** — authorize first with `SetToken` or `SetSerial`.
 
-**Error 633 on install_license** — the plan's machine quota is used up. Switch to
-token authorization or contact support.
+**Error 633 on ensure_token / get_token** — the plan's machine quota is used up.
+Contact support.
 
 ## Links
 

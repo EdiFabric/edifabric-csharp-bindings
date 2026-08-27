@@ -55,6 +55,9 @@ public enum EdiFabricErrorCode
     MaxLicensesExceeded = 633,
     LicenseSnapshotMissing = 634,
     LicenseNotSet = 635,
+    RateExceeded = 636,
+    InvalidJson = 637,
+    IncorrectLicense = 638,
 }
 
 /// <summary>Thrown when a native call returns a non-zero status code.</summary>
@@ -159,13 +162,13 @@ public static class EdiFabricX12
     /* Licensing                                                           */
     /* ------------------------------------------------------------------ */
 
-    /// <summary>Registers this machine once. Requires internet access.</summary>
-    public static unsafe void InstallLicense(string serial)
+    /// <summary>Caches a token for runtime authorization against the license server. Retrieves a new token if the cached token expires within the specified number of seconds.</summary>
+    public static unsafe void EnsureToken(string serial, int seconds)
     {
         var bytes = Encoding.UTF8.GetBytes(serial);
         fixed (byte* pointer = bytes)
         {
-            Check(NativeMethods.InstallLicense(pointer, bytes.Length), "install_license");
+            Check(NativeMethods.EnsureToken(pointer, bytes.Length, seconds), "ensure_token");
         }
     }
 
