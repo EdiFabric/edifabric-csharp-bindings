@@ -58,6 +58,7 @@ public enum EdiFabricErrorCode
     RateExceeded = 636,
     InvalidJson = 637,
     IncorrectLicense = 638,
+    LicenseQuotaExceeded = 639,
 }
 
 /// <summary>Thrown when a native call returns a non-zero status code.</summary>

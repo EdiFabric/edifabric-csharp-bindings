@@ -1,4 +1,4 @@
-# ediFabric Native X12 — C# bindings
+# ediFabric Native X12 - C# bindings
 
 **ediFabric Native** is a self-contained, high-performance X12 EDI native shared library. It converts X12 EDI to JSON (and back),
 validates transaction sets, and generates acknowledgments — callable from **any
@@ -27,7 +27,7 @@ C# P/Invoke bindings for [ediFabric Native](https://www.edifabric.com/edifabric-
 | Linux | `edifabric-x12-tools.so` |
 | macOS | `edifabric-x12-tools.dylib` |
 
-1. [Sign up free for **Community**](https://www.edifabric.com/pricing.html) to get an evaluation serial key. Community never expires, requires no credit card, and is limited to 250 operations per day for non-production use. After signup, retrieve your serial from [Your Account & API key](https://support.edifabric.com/hc/en-us/articles/360007159031-Your-Account-API-key).
+1. [Sign up free for **Community**](https://www.edifabric.com/pricing.html) to get an evaluation serial key. Community never expires, requires no credit card, and is limited to 250 operations per day for non-production use. After signup, retrieve your serial from [Your Account](https://support.edifabric.com/hc/en-us/articles/360007159031-Your-Account-API-key).
 2. [Download the **ediFabric Native** library](https://support.edifabric.com/hc/en-us/articles/37289848931869-Download).
 
 Plus your **model files** (per transaction set) and a **map file** that tells the
@@ -195,7 +195,7 @@ do not export `free_error` fall back to `Marshal.FreeHGlobal`.
 > to get an evaluation serial key. Community never expires, requires no credit
 > card, and is for non-production evaluation, learning, and prototyping
 > (250 operations per day). After signup, copy your serial from
-> [Your Account & API key](https://support.edifabric.com/hc/en-us/articles/360007159031-Your-Account-API-key).
+> [Your Account](https://support.edifabric.com/hc/en-us/articles/360007159031-Your-Account-API-key).
 >
 > If you hit the Community daily quota, native calls return [error 639](#error-codes);
 > upgrade at [edifabric.com/pricing](https://www.edifabric.com/pricing.html) if you
@@ -228,17 +228,51 @@ EdiFabricX12.SetToken(token);
 
 `SetMap` tells the engine where to find transaction-set models. Keys are
 `message:version`. Set `default` to your serial to resolve unmapped transaction
-sets through the online spec service, or leave it `null` and map everything locally.
+sets through the online spec service, or leave it `null` (or `""`) and map
+everything locally.
+
+The example builds that JSON at runtime instead of hard-coding paths. Online
+fallback is a `JsonObject` with `default` set to your serial:
+
+```csharp
+var map = new JsonObject
+{
+    ["default"] = serial,
+    ["maps"] = new JsonObject(),
+};
+
+EdiFabricX12.SetMap(map.ToJsonString());
+```
+
+For local models, load a map file and rewrite each entry's `location` to the
+folder that actually holds the JSON files (see `DemoSetLocalMap` in
+`EdiFabricNativeExample/Program.cs`):
+
+```csharp
+var mapLocation = Path.GetFullPath("map");
+var localMap = JsonNode.Parse(File.ReadAllText(Path.Combine(mapLocation, "map.json")))!.AsObject();
+var maps = localMap["maps"]!.AsObject();
+foreach (var entry in maps)
+    entry.Value!["location"] = mapLocation;
+
+EdiFabricX12.SetMap(localMap.ToJsonString());
+```
+
+`map.json` lists each transaction set; `location` is filled in at runtime so the
+same file works from any working directory:
 
 ```json
 {
-  "default": null,
+  "default": "",
   "maps": {
-    "837:005010X222A1": { "type": 1, "name": "837P.json", "location": "/opt/models" },
-    "850:005010":       { "type": 1, "name": "850.json",  "location": "/opt/models" }
+    "837:005010X222A1": { "type": 1, "name": "model837P.json", "location": "" },
+    "834:005010X220A1": { "type": 1, "name": "model834.json",  "location": "" }
   }
 }
 ```
+
+You can also mix both: keep `default` as your serial and add local entries under
+`maps` for the transaction sets you ship on disk.
 
 All X12 transactions, such as 837P, 834, 850, etc. are represented as proprietary JSON.
 Download a standard model from [EdiNation Spec Library](https://edination.edifabric.com/edi-spec-library.html),
@@ -383,5 +417,5 @@ you wish to continue.
 - [Documentation](https://support.edifabric.com/hc/en-us/articles/37276016388125-Introduction)
 - [Product page](https://www.edifabric.com/edifabric-native.html)
 - [Community plan (free signup)](https://www.edifabric.com/pricing.html)
-- [Your Account & API key](https://support.edifabric.com/hc/en-us/articles/360007159031-Your-Account-API-key)
+- [Your Account](https://support.edifabric.com/hc/en-us/articles/360007159031-Your-Account-API-key)
 - Support: support@edifabric.com
