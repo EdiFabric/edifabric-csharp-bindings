@@ -30,6 +30,9 @@ public enum EdiFabricErrorCode
 {
     Success = 0,
     InsufficientCapacity = 1,
+    Unknown = 501,
+    NoConnection = 502,
+    ModelMapInvalid = 503,
     IncorrectInput = 611,
     LoggerInitialization = 612,
     MapDeserialization = 613,
