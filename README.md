@@ -27,24 +27,27 @@ C# P/Invoke bindings for [ediFabric Native](https://www.edifabric.com/edifabric-
 | Linux | `edifabric-x12-tools.so` |
 | macOS | `edifabric-x12-tools.dylib` |
 
-[Download **ediFabric Native** Library](https://support.edifabric.com/hc/en-us/articles/37289848931869-Download)
+1. [Sign up free for **Community**](https://www.edifabric.com/pricing.html) to get an evaluation serial key. Community never expires, requires no credit card, and is limited to 250 operations per day for non-production use. After signup, retrieve your serial from [Your Account & API key](https://support.edifabric.com/hc/en-us/articles/360007159031-Your-Account-API-key).
+2. [Download the **ediFabric Native** library](https://support.edifabric.com/hc/en-us/articles/37289848931869-Download).
 
 Plus your **model files** (per transaction set) and a **map file** that tells the
 engine where to find them. See [Model map](#model-map) for details.
 
 ## Getting started
 
-**Download the library** from [here](https://support.edifabric.com/hc/en-us/articles/37289848931869-Download).
-Put the native library in the repository root, then run the walkthrough:
+**Sign up free for Community** at [edifabric.com/pricing](https://www.edifabric.com/pricing.html)
+to get an evaluation serial key, then **download the library** from
+[here](https://support.edifabric.com/hc/en-us/articles/37289848931869-Download).
+Put the native library in the repository root, then run the walkthrough with your serial:
 
 ```bash
 cd EdiFabricNativeExample
-dotnet run
+dotnet run -- --serial YOUR_SERIAL
 ```
 
 The project copies the library next to the executable on build. It authorizes with
-the free plan serial, loads the model map, and calls every function in the ABI,
-printing what each one returns.
+your Community (or paid) serial, loads the model map, and calls every function in
+the ABI, printing what each one returns.
 
 ```
 ======================================================================
@@ -57,16 +60,16 @@ Parse: parse (mode 2, JSON + validation report)
 Options:
 
 ```bash
-dotnet run -- --serial YOUR_SERIAL     # use your own license
+dotnet run -- --serial YOUR_SERIAL     # Community or paid serial (required)
 dotnet run -- --lib /opt/edifabric     # library file or the folder holding it
-dotnet run -- --skip-network           # authorize with set_serial only
 ```
+
+You can also set `EDIFABRIC_SERIAL` instead of passing `--serial`.
 
 The library is resolved through a `DllImportResolver` that tries
 `EdiFabricX12.LibraryPath`, then `EDIFABRIC_X12_LIB`, then the application
 directory and a few levels above it, before falling back to the default .NET
-probing logic. The serial comes from `--serial`, then `EDIFABRIC_SERIAL`, then
-the built-in free plan serial.
+probing logic. The serial comes from `--serial`, then `EDIFABRIC_SERIAL`.
 
 All strings and payloads cross the boundary as **UTF‑8 byte buffers**
 (`pointer + length`). Every function returns `0` on success or a non-zero
@@ -86,10 +89,10 @@ blocks:
 ```csharp
 using EdiFabric.Native.X12;
 
-const string serial = "your-serial";
+const string serial = "your-serial";   // from your Community or paid plan
 
 EdiFabricX12.Load();                    // optional, any call loads on demand
-EdiFabricX12.SetSerial(serial);         // or SetToken(token) for offline use (only available for the Enterprise license)
+EdiFabricX12.SetSerial(serial);         // Community: SetSerial. Developer: prefer EnsureToken. Enterprise: prefer SetToken.
 EdiFabricX12.SetMap($$"""{"default": "{{serial}}", "maps": {}}""");
 
 var edi = File.ReadAllBytes("837p.txt");
@@ -188,30 +191,37 @@ do not export `free_error` fall back to `Marshal.FreeHGlobal`.
 ## Licensing
 
 > [!NOTE]
-> The examples are available with a free plan which can be used only with Serial model validation.
-> Tokens are only available for the Enterprise plan. For the free and developer plans, the only
-> licensing call must be `set_serial`.
+> Sign up free for the [Community plan](https://www.edifabric.com/pricing.html)
+> to get an evaluation serial key. Community never expires, requires no credit
+> card, and is for non-production evaluation, learning, and prototyping
+> (250 operations per day). After signup, copy your serial from
+> [Your Account & API key](https://support.edifabric.com/hc/en-us/articles/360007159031-Your-Account-API-key).
+>
+> If you hit the Community daily quota, native calls return [error 639](#error-codes);
+> upgrade at [edifabric.com/pricing](https://www.edifabric.com/pricing.html) if you
+> want to continue.
 
-The serial key for the free plan is:
-```
-bd96a836feca45cb91c86ee65d281f52
-```
-
-Two models are supported. Tokens are recommended for containers, air-gapped
-machines, and high volume; serials are simplest when always online.
+| Plan | What works | Recommended |
+| --- | --- | --- |
+| Community | `SetSerial` only | `SetSerial` |
+| Developer | `SetSerial` and `EnsureToken` (`EnsureToken` caches the result for 1 day) | `EnsureToken` |
+| Enterprise | `SetSerial`, `EnsureToken`, `GetToken` / `SetToken` | `SetToken` (offline tokens) |
 
 ```csharp
-// Token (Enterprise): keep a cached token fresh; refreshes if it expires within N seconds
+// Community: authorize per process against the license server
+EdiFabricX12.SetSerial(serial);
+
+// Developer (recommended): 1-day built-in cache; refreshes if the token expires within N seconds
 EdiFabricX12.EnsureToken(serial, seconds: 3600);
 Console.WriteLine(EdiFabricX12.GetTokenExpiration());   // DateTime, or null when unset
 
-// Or fetch / validate / set a token yourself
+// Developer (also works): same as Community, online check per process
+EdiFabricX12.SetSerial(serial);
+
+// Enterprise (recommended): fetch / validate / set an offline token yourself
 var token = EdiFabricX12.GetToken(serial);
 EdiFabricX12.ValidateToken(token);
 EdiFabricX12.SetToken(token);
-
-// Serial (free / developer): authorize per process against the license server
-EdiFabricX12.SetSerial(serial);
 ```
 
 ## Model map
@@ -230,13 +240,13 @@ sets through the online spec service, or leave it `null` and map everything loca
 }
 ```
 
-All X12 transactions, such as 837P, 834, 850, etc. are represented as proprietary JSON. 
-Download a standard model from [EdiNation Spec Library](https://edination.edifabric.com/edi-spec-library.html), 
-or a custom model from [EdiNation Spec Builder](https://edination.edifabric.com/edi-spec-builder.html). 
+All X12 transactions, such as 837P, 834, 850, etc. are represented as proprietary JSON.
+Download a standard model from [EdiNation Spec Library](https://edination.edifabric.com/edi-spec-library.html),
+or a custom model from [EdiNation Spec Builder](https://edination.edifabric.com/edi-spec-builder.html).
 Create/modify models in OpenEDI format, upload them in EdiNation Spec Builder and download them as JSON for use in ediFabric Native.
 
-To download a model in either EdiNation Spec Library or EdiNation Spec Builder, 
-select the model first, then in the JSON view 
+To download a model in either EdiNation Spec Library or EdiNation Spec Builder,
+select the model first, then in the JSON view
 select the Download button in the top right corner.
 
 ![Model Img](https://github.com/EdiFabric/native-csharp-examples/blob/main/model.png)
@@ -305,37 +315,50 @@ without another split or merge interleaving from a different thread.
 
 `0` is success and `1` means the output buffer was too small. Library-level codes
 are exposed as `EdiFabricErrorCode`, and `GetError(code)` returns the message.
+Validation codes (elements, segments, transaction sets, groups, and interchanges)
+appear in the parse report when `mode ≥ 2`.
+
+**Error 639** means the Community (evaluation) daily quota was exceeded.
+Upgrade your plan at [edifabric.com/pricing](https://www.edifabric.com/pricing.html)
+if you wish to continue.
+
+### Parser and library
 
 | Code | Meaning |
 | --- | --- |
-| 501 | Unknown |
-| 502 | No internet access to the authentication API |
-| 503 | Local map file has invalid paths or file names |
-| 611 | Incorrect or empty input |
-| 612 | Logger initialization failed |
-| 613 | Map JSON could not be deserialized |
-| 614 | Negative output capacity |
-| 615 | Model map not set, call `SetMap` first |
-| 616 | Mode must be 1, 2, or 3 |
-| 617 | No JSON produced |
-| 618 | Validation result unavailable |
-| 619 | Validation report serialization failed |
-| 620 | Incorrect token |
-| 621 | Config JSON could not be deserialized |
-| 622 | Split `segment_id` missing or empty |
-| 623 | `Split` called before `StartSplit` |
-| 624 | No result available for `GetResult` |
-| 625 | `GetResult` buffer size mismatch |
-| 626 | `Merge` called before `StartMerge` |
-| 627 | Incorrect or null output pointer |
-| 628 | Incorrect serial |
-| 629 | License not installed; call `EnsureToken` or `SetToken` |
-| 630 | Application maximum version exceeded |
-| 631 | Token expired |
-| 632 | Token missing |
-| 633 | Maximum licenses exceeded |
-| 634 | License snapshot not found |
-| 635 | License not set, call `SetToken` or `SetSerial` |
+| 1 | The suggested output buffer size is too small |
+| 501 | Unexpected error. Contact support@edifabric.com and include a sample project/file to reproduce the issue |
+| 502 | No connection to EdiNation API |
+| 503 | The model map configuration is invalid. Check the paths and the model file names are correct |
+| 611 | The input buffer is either null or its size is nill |
+| 612 | The logger failed to log |
+| 613 | The map configuration file is invalid |
+| 614 | The output capacity must be positive |
+| 615 | Models map must be set before parsing or splitting |
+| 616 | Mode must be any of: 1 - Parse, 2 - Parse and Validate, 3 - Parse and Validate and Acknowledge |
+| 617 | Parser failed. Contact support@edifabric.com and include a sample project/file to reproduce the issue |
+| 618 | Validation failed. Contact support@edifabric.com and include a sample project/file to reproduce the issue |
+| 619 | Validation serializer failed. Contact support@edifabric.com and include a sample project/file to reproduce the issue |
+| 620 | The token is invalid. Contact support@edifabric.com for assistance |
+| 621 | The configuration file is invalid |
+| 622 | The split segment ID must not be blank |
+| 623 | Call `StartSplit` before splitting |
+| 624 | The result can't be retrieved. Contact support@edifabric.com and include a sample project/file to reproduce the issue |
+| 625 | Result buffer size mismatched |
+| 626 | Call `StartMerge` before merging |
+| 627 | The output buffer is either null or its size is nill |
+| 628 | The serial number is missing or incorrect. `GetToken` doesn't work with Developer license |
+| 629 | License was not installed. Contact support@edifabric.com for assistance |
+| 630 | No license to use this version. Contact support@edifabric.com for assistance |
+| 631 | The token has expired. Get and set a new token to continue |
+| 632 | The token is missing. Set token to continue |
+| 633 | Reached the maximum number of licenses. Set token to continue |
+| 634 | Environment not recognized for licensing or reached the maximum number of licenses |
+| 635 | Serial or token not found. Either set token or serial to continue |
+| 636 | The rate to get serials was exceeded for your license. Wait for 60 seconds and try again or upgrade your license |
+| 637 | Invalid JSON. Enable logging for additional details |
+| 638 | The operation is not supported by your license |
+| 639 | Community daily quota exceeded. Your license has reached its daily call limit. Upgrade your plan at edifabric.com to continue |
 
 ## Troubleshooting
 
@@ -345,13 +368,20 @@ are exposed as `EdiFabricErrorCode`, and `GetError(code)` returns the message.
 **Error 615 on parse** — call `SetMap` before parsing or splitting. `ClearCache`
 resets the map, so reload it afterwards.
 
-**Error 635 on parse** — authorize first with `SetToken` or `SetSerial`.
+**Error 628 / 635 on parse** — authorize first: `SetSerial` on Community,
+`EnsureToken` (or `SetSerial`) on Developer, or `SetToken` on Enterprise.
 
 **Error 633 on ensure_token / get_token** — the plan's machine quota is used up.
 Contact support.
+
+**Error 639** — the Community (evaluation) daily quota was exceeded. Wait until
+the next day, or [upgrade your plan](https://www.edifabric.com/pricing.html) if
+you wish to continue.
 
 ## Links
 
 - [Documentation](https://support.edifabric.com/hc/en-us/articles/37276016388125-Introduction)
 - [Product page](https://www.edifabric.com/edifabric-native.html)
+- [Community plan (free signup)](https://www.edifabric.com/pricing.html)
+- [Your Account & API key](https://support.edifabric.com/hc/en-us/articles/360007159031-Your-Account-API-key)
 - Support: support@edifabric.com
