@@ -27,8 +27,8 @@ C# P/Invoke bindings for [ediFabric Native](https://www.edifabric.com/edifabric-
 | Linux | `edifabric-x12-tools.so` |
 | macOS | `edifabric-x12-tools.dylib` |
 
-1. [Sign up free for **Community**](https://www.edifabric.com/pricing.html) to get an evaluation serial key. Community never expires, requires no credit card, and is limited to 250 operations per day for non-production use. After signup, retrieve your serial from [Your Account](https://support.edifabric.com/hc/en-us/articles/360007159031-Your-Account-API-key).
-2. [Download the **ediFabric Native** library](https://support.edifabric.com/hc/en-us/articles/37289848931869-Download).
+1. [Sign up free for **Community**](https://www.edifabric.com/pricing.html) to get an evaluation serial key. Community never expires, requires no credit card, and is limited to 250 operations per day for non-production use. After signup, retrieve your serial from [Your Account](https://www.edifabric.com/docs/getting-started/your-account.html).
+2. [Download the **ediFabric Native** library](https://www.edifabric.com/docs/edifabric-native/download.html).
 
 Plus your **model files** (per transaction set) and a **map file** that tells the
 engine where to find them. See [Model map](#model-map) for details.
@@ -37,7 +37,7 @@ engine where to find them. See [Model map](#model-map) for details.
 
 **Sign up free for Community** at [edifabric.com/pricing](https://www.edifabric.com/pricing.html)
 to get an evaluation serial key, then **download the library** from
-[here](https://support.edifabric.com/hc/en-us/articles/37289848931869-Download).
+[here](https://www.edifabric.com/docs/edifabric-native/download.html).
 Put the native library in the repository root, then run the walkthrough with your serial:
 
 ```bash
@@ -195,7 +195,7 @@ do not export `free_error` fall back to `Marshal.FreeHGlobal`.
 > to get an evaluation serial key. Community never expires, requires no credit
 > card, and is for non-production evaluation, learning, and prototyping
 > (250 operations per day). After signup, copy your serial from
-> [Your Account](https://support.edifabric.com/hc/en-us/articles/360007159031-Your-Account-API-key).
+> [Your Account](https://www.edifabric.com/docs/getting-started/your-account.html).
 >
 > If you hit the Community daily quota, native calls return [error 639](#error-codes);
 > upgrade at [edifabric.com/pricing](https://www.edifabric.com/pricing.html) if you
@@ -414,8 +414,8 @@ you wish to continue.
 
 ## Links
 
-- [Documentation](https://support.edifabric.com/hc/en-us/articles/37276016388125-Introduction)
+- [Documentation](https://www.edifabric.com/docs/edifabric-native/introduction.html)
 - [Product page](https://www.edifabric.com/edifabric-native.html)
 - [Community plan (free signup)](https://www.edifabric.com/pricing.html)
-- [Your Account](https://support.edifabric.com/hc/en-us/articles/360007159031-Your-Account-API-key)
+- [Your Account](https://www.edifabric.com/docs/getting-started/your-account.html)
 - Support: support@edifabric.com
