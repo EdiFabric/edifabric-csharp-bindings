@@ -10,16 +10,30 @@ C# P/Invoke bindings for [ediFabric Native](https://www.edifabric.com/edifabric-
 
 | File | Purpose |
 | --- | --- |
-| `EdiFabricNativeExample/NativeMethods.cs` | `DllImport` declarations mirroring the C header |
-| `EdiFabricNativeExample/EdiFabricX12.cs` | managed API over those declarations |
+| `EdiFabric.Native.X12/NativeMethods.cs` | `DllImport` declarations mirroring the C header |
+| `EdiFabric.Native.X12/EdiFabricX12.cs` | managed API over those declarations (the `EdiFabric.Native.X12` NuGet package) |
 | `EdiFabricNativeExample/Program.cs` | runnable walkthrough of every entry point |
-| `../c-abi-edifabric_x12_tools.h` | the C header these bindings mirror |
+| `c-abi-edifabric_x12_tools.h` | the C header these bindings mirror |
+| `PUBLISHING.md` | how the NuGet package is built and published |
+
+## Install
+
+```bash
+dotnet add package EdiFabric.Native.X12
+```
+
+The package targets .NET 8 or later and bundles the ediFabric Native library for
+Windows x64, Linux x64 and arm64 (glibc 2.34 or later), and macOS arm64 (12 or
+later). .NET copies the library for your platform to the build output, under
+`runtimes/<rid>/native/` or, when you build or publish for a specific runtime, next
+to your application, and the bindings load it from there. A library you set in
+`EdiFabricX12.LibraryPath` or `EDIFABRIC_X12_LIB` takes precedence over the bundled one.
 
 ## Requirements
 
-- .NET 10.0 SDK or later
+- .NET 10.0 SDK or later to build this repository; the package runs on .NET 8 or later
 - 64-bit Windows, Linux, or macOS
-- The native library for your platform:
+- The native library for your platform (bundled in the NuGet package; download it when you run the example from a clone):
 
 | Platform | File |
 | --- | --- |
@@ -68,8 +82,8 @@ You can also set `EDIFABRIC_SERIAL` instead of passing `--serial`.
 
 The library is resolved through a `DllImportResolver` that tries
 `EdiFabricX12.LibraryPath`, then `EDIFABRIC_X12_LIB`, then the application
-directory and a few levels above it, before falling back to the default .NET
-probing logic. The serial comes from `--serial`, then `EDIFABRIC_SERIAL`.
+directory, the package's `runtimes/<rid>/native/` folder under it, and a few levels
+above it, before falling back to the default .NET probing logic. The serial comes from `--serial`, then `EDIFABRIC_SERIAL`.
 
 All strings and payloads cross the boundary as **UTF‑8 byte buffers**
 (`pointer + length`). Every function returns `0` on success or a non-zero
@@ -77,8 +91,8 @@ All strings and payloads cross the boundary as **UTF‑8 byte buffers**
 
 ## Usage
 
-Copy `NativeMethods.cs` and `EdiFabricX12.cs` into your project and enable unsafe
-blocks:
+Add the `EdiFabric.Native.X12` package (see [Install](#install)). Or copy
+`NativeMethods.cs` and `EdiFabricX12.cs` into your project and enable unsafe blocks:
 
 ```xml
 <PropertyGroup>
@@ -280,11 +294,11 @@ All X12 transactions, such as 837P, 834 and 850, are represented as ediFabric Na
 
 **Standard models** come from the [EDI spec library](https://www.edifabric.com/specs/index.html), and you can download them without an account. Open the transaction, for example [837P](https://www.edifabric.com/specs/x12/hipaa/005010/837p.html), and on the **ediFabric Native** tab select **Download Native**.
 
-![The Download Native button on the ediFabric Native tab of 837P in the EDI spec library](model.png)
+![The Download Native button on the ediFabric Native tab of 837P in the EDI spec library](https://raw.githubusercontent.com/EdiFabric/edifabric-csharp-bindings/main/model.png)
 
 **Custom models** come from the [EDI Spec Builder](https://www.edifabric.com/spec-builder/index.html). When a trading partner changes the standard, open the transaction in the EDI spec library and select **Customize in Spec Builder**, or import your own OpenEDI file. Edit the OpenEDI schema until it matches the partner's guide and select **Update**. Then, on the **ediFabric Native** tab, select **Download Native**.
 
-![The Download Native button on the ediFabric Native tab of a custom spec in the EDI Spec Builder](model-builder.png)
+![The Download Native button on the ediFabric Native tab of a custom spec in the EDI Spec Builder](https://raw.githubusercontent.com/EdiFabric/edifabric-csharp-bindings/main/model-builder.png)
 
 Save the downloaded file where the map can name it, and add it to `maps` under its `message:version` key, for example `837:005010X222A1`. The file is the compiled layout the engine loads, not the OpenEDI schema. To change a model, edit the spec in the EDI Spec Builder and download it again. See [EDI models](https://www.edifabric.com/docs/edifabric-native/edi-models.html) and [OpenEDI format](https://www.edifabric.com/docs/getting-started/openedi-format.html).
 
@@ -337,7 +351,7 @@ The values for the splitter are in [EdiNation](https://edination.edifabric.com/)
 
 The easiest way to get the splitter configuration is to select the copy button next to **Splitter**, which copies the three values as JSON. Paste them as the value of `split`.
 
-![The Splitter of the HL segment in loop 2000A of an 837P, under Selected item in EdiNation](splitter.png)
+![The Splitter of the HL segment in loop 2000A of an 837P, under Selected item in EdiNation](https://raw.githubusercontent.com/EdiFabric/edifabric-csharp-bindings/main/splitter.png)
 
 ## Threading
 

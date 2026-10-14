@@ -1,0 +1,56 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <LangVersion>latest</LangVersion>
+    <RootNamespace>EdiFabric.Native.X12</RootNamespace>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <NoWarn>$(NoWarn);CS1591</NoWarn>
+  </PropertyGroup>
+
+  <PropertyGroup>
+    <PackageId>EdiFabric.Native.X12</PackageId>
+    <Version>1.1.1</Version>
+    <Authors>EdiFabric</Authors>
+    <Company>EdiFabric</Company>
+    <Copyright>Copyright © EdiFabric</Copyright>
+    <Description>.NET bindings for ediFabric Native X12: convert X12 EDI to JSON and back, validate, and generate acknowledgments. Bundles the native library for Windows x64, Linux x64/arm64 (glibc 2.34+) and macOS arm64 (12+).</Description>
+    <PackageTags>edifabric;x12;edi;hipaa;837;native</PackageTags>
+    <PackageProjectUrl>https://www.edifabric.com/edifabric-native.html</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/EdiFabric/edifabric-csharp-bindings</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PublishRepositoryUrl>true</PublishRepositoryUrl>
+    <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
+    <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <NativesDir>$(MSBuildThisFileDirectory)..\natives\</NativesDir>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <None Include="..\README.md" Pack="true" PackagePath="\" Visible="false" />
+    <None Include="..\LICENSE.md" Pack="true" PackagePath="\" Visible="false" />
+    <NativeLibrary Include="$(NativesDir)win-x64\edifabric-x12-tools.dll" Rid="win-x64" />
+    <NativeLibrary Include="$(NativesDir)linux-x64\edifabric-x12-tools.so" Rid="linux-x64" />
+    <NativeLibrary Include="$(NativesDir)linux-arm64\edifabric-x12-tools.so" Rid="linux-arm64" />
+    <NativeLibrary Include="$(NativesDir)osx-arm64\edifabric-x12-tools.dylib" Rid="osx-arm64" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <None Include="$(NativesDir)win-x64\edifabric-x12-tools.dll" Condition="Exists('$(NativesDir)win-x64\edifabric-x12-tools.dll')" Pack="true" PackagePath="runtimes\win-x64\native\" Visible="false" />
+    <None Include="$(NativesDir)linux-x64\edifabric-x12-tools.so" Condition="Exists('$(NativesDir)linux-x64\edifabric-x12-tools.so')" Pack="true" PackagePath="runtimes\linux-x64\native\" Visible="false" />
+    <None Include="$(NativesDir)linux-arm64\edifabric-x12-tools.so" Condition="Exists('$(NativesDir)linux-arm64\edifabric-x12-tools.so')" Pack="true" PackagePath="runtimes\linux-arm64\native\" Visible="false" />
+    <None Include="$(NativesDir)osx-arm64\edifabric-x12-tools.dylib" Condition="Exists('$(NativesDir)osx-arm64\edifabric-x12-tools.dylib')" Pack="true" PackagePath="runtimes\osx-arm64\native\" Visible="false" />
+  </ItemGroup>
+
+  <!-- The package must bundle every library; run scripts/fetch-natives first. -->
+  <Target Name="RequireNativeLibraries" BeforeTargets="GenerateNuspec">
+    <Error Condition="!Exists('%(NativeLibrary.FullPath)')" Text="Missing %(NativeLibrary.FullPath). Run scripts/fetch-natives.ps1 (or .sh) before packing." />
+  </Target>
+
+</Project>

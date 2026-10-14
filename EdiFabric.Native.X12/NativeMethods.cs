@@ -25,6 +25,17 @@ internal static unsafe class NativeMethods
         : RuntimeInformation.IsOSPlatform(OSPlatform.OSX) ? "edifabric-x12-tools.dylib"
         : "edifabric-x12-tools.so";
 
+    /// <summary>The runtime identifier the NuGet package bundles a library for, or null.</summary>
+    private static string? PackageRid =>
+        RuntimeInformation.OSArchitecture switch
+        {
+            Architecture.X64 when RuntimeInformation.IsOSPlatform(OSPlatform.Windows) => "win-x64",
+            Architecture.X64 when RuntimeInformation.IsOSPlatform(OSPlatform.Linux) => "linux-x64",
+            Architecture.Arm64 when RuntimeInformation.IsOSPlatform(OSPlatform.Linux) => "linux-arm64",
+            Architecture.Arm64 when RuntimeInformation.IsOSPlatform(OSPlatform.OSX) => "osx-arm64",
+            _ => null,
+        };
+
     private static IntPtr Resolve(string libraryName, System.Reflection.Assembly assembly, DllImportSearchPath? searchPath)
     {
         if (libraryName != LibraryName)
@@ -57,6 +68,10 @@ internal static unsafe class NativeMethods
 
         var baseDirectory = AppContext.BaseDirectory;
         yield return Path.Combine(baseDirectory, fileName);
+
+        // Where builds that are not runtime-specific put the library from the NuGet package.
+        if (PackageRid is { } rid)
+            yield return Path.Combine(baseDirectory, "runtimes", rid, "native", fileName);
 
         // Walk up a few levels so the example also runs straight from bin/Debug/net8.0.
         var directory = new DirectoryInfo(baseDirectory);

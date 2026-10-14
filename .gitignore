@@ -7,5 +7,13 @@
 /X12/bin
 /X12/obj
 /EdiFabricNativeExample/bin/Debug
+/EdiFabricNativeExample/bin/Release
 /EdiFabricNativeExample/obj
 /EdiFabricNativeExample/edifabric-x12-tools.dll
+/EdiFabric.Native.X12/bin
+/EdiFabric.Native.X12/obj
+/scripts/smoke-test/bin
+/scripts/smoke-test/obj
+/natives/
+/dist/
+edifabric.log

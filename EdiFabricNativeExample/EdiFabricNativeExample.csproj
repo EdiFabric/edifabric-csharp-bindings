@@ -7,10 +7,14 @@
     <AssemblyName>EdiFabricNativeExample</AssemblyName>
     <Nullable>enable</Nullable>
     <ImplicitUsings>enable</ImplicitUsings>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <InvariantGlobalization>true</InvariantGlobalization>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <IsPackable>false</IsPackable>
   </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\EdiFabric.Native.X12\EdiFabric.Native.X12.csproj" />
+  </ItemGroup>
 
   <!-- Copy the native library next to the executable when it sits in the repository root. -->
   <ItemGroup>
