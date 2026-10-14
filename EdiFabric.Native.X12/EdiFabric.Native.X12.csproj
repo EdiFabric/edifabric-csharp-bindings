@@ -27,6 +27,7 @@
     <PackageLicenseFile>LICENSE.md</PackageLicenseFile>
     <PackageRequireLicenseAcceptance>true</PackageRequireLicenseAcceptance>
     <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageIcon>icon.png</PackageIcon>
     <IncludeSymbols>true</IncludeSymbols>
     <SymbolPackageFormat>snupkg</SymbolPackageFormat>
     <NativesDir>$(MSBuildThisFileDirectory)..\natives\</NativesDir>
@@ -35,6 +36,7 @@
   <ItemGroup>
     <None Include="..\README.md" Pack="true" PackagePath="\" Visible="false" />
     <None Include="..\LICENSE.md" Pack="true" PackagePath="\" Visible="false" />
+    <None Include="..\icon.png" Pack="true" PackagePath="\" Visible="false" />
     <NativeLibrary Include="$(NativesDir)win-x64\edifabric-x12-tools.dll" Rid="win-x64" />
     <NativeLibrary Include="$(NativesDir)linux-x64\edifabric-x12-tools.so" Rid="linux-x64" />
     <NativeLibrary Include="$(NativesDir)linux-arm64\edifabric-x12-tools.so" Rid="linux-arm64" />

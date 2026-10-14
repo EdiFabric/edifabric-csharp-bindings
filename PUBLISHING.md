@@ -20,6 +20,7 @@ version is uploaded there.
 | File | Purpose |
 | --- | --- |
 | `EdiFabric.Native.X12/EdiFabric.Native.X12.csproj` | version, package metadata, and the four `runtimes` entries; `dotnet pack` fails if a library is missing |
+| `icon.png` | the package icon (the edifabric.com favicon, as used by the `EdiFabric` package) |
 | `scripts/fetch-natives.ps1`, `.sh` | download the four libraries into `natives/<rid>/` |
 | `scripts/smoke-test/` | a console app that installs the package from `dist/` and loads the bundled library |
 | `scripts/release.ps1`, `.sh` | fetch, pack, smoke-test, and push from your machine |
