@@ -14,7 +14,7 @@
 
   <PropertyGroup>
     <PackageId>EdiFabric.Native.X12</PackageId>
-    <Version>1.1.1</Version>
+    <Version>1.1.1.1</Version>
     <Authors>EdiFabric</Authors>
     <Company>EdiFabric</Company>
     <Copyright>Copyright © EdiFabric</Copyright>
