@@ -227,7 +227,7 @@ do not export `free_error` fall back to `Marshal.FreeHGlobal`.
 | --- | --- | --- |
 | Community | `SetSerial` only | `SetSerial` |
 | Developer | `SetSerial` and `EnsureToken` (`EnsureToken` caches the result for 1 day) | `EnsureToken` |
-| Enterprise | `SetSerial`, `EnsureToken`, `GetToken` / `SetToken` | `SetToken` (offline tokens) |
+| Enterprise and Perpetual | `SetSerial`, `EnsureToken`, `GetToken` / `SetToken` | `SetToken` (offline tokens) |
 
 ```csharp
 // Community: authorize per process against the license server
@@ -240,11 +240,13 @@ Console.WriteLine(EdiFabricX12.GetTokenExpiration());   // DateTime, or null whe
 // Developer (also works): same as Community, online check per process
 EdiFabricX12.SetSerial(serial);
 
-// Enterprise (recommended): fetch / validate / set an offline token yourself
+// Enterprise and Perpetual (recommended): fetch / validate / set an offline token yourself
 var token = EdiFabricX12.GetToken(serial);
 EdiFabricX12.ValidateToken(token);
 EdiFabricX12.SetToken(token);
 ```
+
+Self-service offline tokens last 30 days, so refresh them before they expire. If your hosts can't refresh a token, Enterprise can request a 1-year token and Perpetual a non-expiring token. Long-lived tokens are issued after the trial or evaluation period to registered companies using professional email addresses, and are non-refundable once issued. See [how to request one](https://www.edifabric.com/docs/faq/pricing-and-licensing-faqs.html#long-lived-tokens). Treat every token as a secret, and keep it out of source control.
 
 ## Model map
 
@@ -424,7 +426,7 @@ if you wish to continue.
 resets the map, so reload it afterwards.
 
 **Error 628 / 635 on parse** — authorize first: `SetSerial` on Community,
-`EnsureToken` (or `SetSerial`) on Developer, or `SetToken` on Enterprise.
+`EnsureToken` (or `SetSerial`) on Developer, or `SetToken` on Enterprise or Perpetual.
 
 **Error 633 on ensure_token / get_token** — the plan's machine quota is used up.
 Contact support.
