@@ -46,11 +46,11 @@ version is uploaded there.
 
 1. Upload the new native build to `https://www.edifabric.com/download/`.
 2. Set `<Version>` in `EdiFabric.Native.X12/EdiFabric.Native.X12.csproj` to the native library
-   version, for example `1.1.1`, and commit.
+   version, for example `1.2.0`, and commit.
 3. Validate the package:
    - GitHub: **Actions > Publish to NuGet > Run workflow** with **publish** cleared
    - or locally: `./scripts/release.ps1 -DryRun` (Windows) or `scripts/release.sh --dry-run`
-4. Create a GitHub release with the tag `v<version>`, for example `v1.1.1`. Publishing the release
+4. Create a GitHub release with the tag `v<version>`, for example `v1.2.0`. Publishing the release
    runs the workflow and pushes the package; the workflow fails if the tag and the version differ.
    Locally, the equivalent is `./scripts/release.ps1` or `scripts/release.sh`.
 5. nuget.org validates and indexes the package, which usually takes 5 to 15 minutes; until then

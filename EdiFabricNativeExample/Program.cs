@@ -11,8 +11,10 @@ namespace EdiFabric.Native.Example;
 /// </summary>
 internal static class Program
 {
-    static string ediDir = "../../../edi/";
-    const string mapDir = "../../../map/";
+    // The samples beside the project, found from the build output (bin/<configuration>/<framework>), so the example
+    // runs the same from Visual Studio and with "dotnet run" from any folder.
+    static readonly string ediDir = Path.Combine(AppContext.BaseDirectory, "../../../edi/");
+    static readonly string mapDir = Path.Combine(AppContext.BaseDirectory, "../../../map/");
 
     private static readonly string SampleEdi = File.ReadAllText(Path.Combine(ediDir, "837p.txt"));
     private static readonly string SampleEdiInvalid = File.ReadAllText(Path.Combine(ediDir, "837p_error.txt"));
@@ -102,14 +104,15 @@ internal static class Program
         Console.WriteLine($"  init_logger -> logging to {logPath}");
     }
 
-    /// <summary>ensure_token, get_token, validate_token, set_token, get_token_expiration, set_serial</summary>
+    /// <summary>ensure_token, the licensing call for every plan</summary>
     private static void DemoLicensing(string serial)
     {
-        Section("Licensing: ensure_token, get_token, validate_token, set_token, set_serial");
-        //  For the free and developer plans only set_serial must be used. Tokens are only available for the Enterprise plan.
+        Section("Licensing: ensure_token");
+        //  EnsureToken licenses the process on every plan: Community and the demo serial are checked online on every
+        //  operation, and Developer, Enterprise and Perpetual get a cached token.
 
-        EdiFabricX12.SetSerial(serial);
-        Console.WriteLine("  set_serial -> ok");
+        EdiFabricX12.EnsureToken(serial, seconds: 3600);
+        Console.WriteLine("  ensure_token -> ok");
     }
 
     /// <summary>set_map online</summary>
