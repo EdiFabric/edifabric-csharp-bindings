@@ -15,8 +15,8 @@
   <PropertyGroup>
     <PackageId>EdiFabric.Native.X12</PackageId>
     <!-- The native library's version, plus a fourth part for a release of the bindings alone. -->
-    <Version>1.2.0.1</Version>
-    <PackageReleaseNotes>Targets .NET 10. The native library is unchanged from 1.2.0. Projects on .NET 8 or 9 can keep using 1.2.0, which has the same library: dotnet add package EdiFabric.Native.X12 --version 1.2.0</PackageReleaseNotes>
+    <Version>1.2.1</Version>
+    <PackageReleaseNotes>Native library 1.2.1: start_split and start_merge copy their input, so a split or merge stream no longer reads the input after the call that started it has returned. Targets .NET 10. Projects on .NET 8 or 9 can use 1.2.0, which has the 1.2.0 library without this fix: dotnet add package EdiFabric.Native.X12 --version 1.2.0</PackageReleaseNotes>
     <Authors>EdiFabric</Authors>
     <Company>EdiFabric</Company>
     <Copyright>Copyright © EdiFabric</Copyright>
