@@ -22,7 +22,8 @@ C# P/Invoke bindings for [ediFabric Native](https://www.edifabric.com/edifabric-
 dotnet add package EdiFabric.Native.X12
 ```
 
-The package targets .NET 10 or later and bundles the ediFabric Native library for
+The package targets .NET 10 or later (on .NET 8 or 9, install version 1.2.0, which has the same
+native library) and bundles the ediFabric Native library for
 Windows x64, Linux x64 and arm64 (glibc 2.34 or later), and macOS arm64 (12 or
 later). .NET copies the library for your platform to the build output, under
 `runtimes/<rid>/native/` or, when you build or publish for a specific runtime, next
