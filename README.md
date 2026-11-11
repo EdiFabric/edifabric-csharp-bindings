@@ -22,7 +22,7 @@ C# P/Invoke bindings for [ediFabric Native](https://www.edifabric.com/edifabric-
 dotnet add package EdiFabric.Native.X12
 ```
 
-The package targets .NET 8 or later and bundles the ediFabric Native library for
+The package targets .NET 10 or later and bundles the ediFabric Native library for
 Windows x64, Linux x64 and arm64 (glibc 2.34 or later), and macOS arm64 (12 or
 later). .NET copies the library for your platform to the build output, under
 `runtimes/<rid>/native/` or, when you build or publish for a specific runtime, next
@@ -31,7 +31,7 @@ to your application, and the bindings load it from there. A library you set in
 
 ## Requirements
 
-- .NET 10.0 SDK or later to build this repository; the package runs on .NET 8 or later
+- .NET 10.0 SDK or later to build this repository; the package runs on .NET 10 or later
 - 64-bit Windows, Linux, or macOS
 - The native library for your platform (bundled in the NuGet package; download it when you run the example from a clone):
 

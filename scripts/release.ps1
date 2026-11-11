@@ -3,7 +3,7 @@
 Pack EdiFabric.Native.X12 with the four bundled libraries, smoke-test it, and push it to nuget.org.
 
 .DESCRIPTION
-Needs the .NET 10 SDK and the .NET 8 runtime (for the smoke test). Pushing needs a nuget.org API
+Needs the .NET 10 SDK. Pushing needs a nuget.org API
 key in NUGET_API_KEY. -DryRun packs and smoke-tests without pushing.
 
 .EXAMPLE

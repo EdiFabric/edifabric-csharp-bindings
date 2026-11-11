@@ -1,12 +1,12 @@
 # Publishing to NuGet
 
 The bindings are published to nuget.org as `EdiFabric.Native.X12`: one package with the managed
-assembly for .NET 8+ and the ediFabric Native library for every supported platform, plus a
+assembly for .NET 10+ and the ediFabric Native library for every supported platform, plus a
 `.snupkg` symbols package.
 
 | Package path | Platform |
 | --- | --- |
-| `lib/net8.0/EdiFabric.Native.X12.dll` | the bindings |
+| `lib/net10.0/EdiFabric.Native.X12.dll` | the bindings |
 | `runtimes/win-x64/native/edifabric-x12-tools.dll` | Windows x64 |
 | `runtimes/linux-x64/native/edifabric-x12-tools.so` | Linux x64, glibc 2.34+ |
 | `runtimes/linux-arm64/native/edifabric-x12-tools.so` | Linux arm64, glibc 2.34+ |

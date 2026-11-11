@@ -73,7 +73,7 @@ internal static unsafe class NativeMethods
         if (PackageRid is { } rid)
             yield return Path.Combine(baseDirectory, "runtimes", rid, "native", fileName);
 
-        // Walk up a few levels so the example also runs straight from bin/Debug/net8.0.
+        // Walk up a few levels so the example also runs straight from bin/Debug/net10.0.
         var directory = new DirectoryInfo(baseDirectory);
         for (var level = 0; level < 6 && directory?.Parent is not null; level++)
         {

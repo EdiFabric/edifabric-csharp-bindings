@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # Pack EdiFabric.Native.X12 with the four bundled libraries, smoke-test it, and push it to nuget.org.
 #
-# Needs the .NET 10 SDK and the .NET 8 runtime (for the smoke test). Pushing needs a nuget.org API
+# Needs the .NET 10 SDK. Pushing needs a nuget.org API
 # key in NUGET_API_KEY.
 #
 #   scripts/release.sh --dry-run   pack and smoke-test without pushing
