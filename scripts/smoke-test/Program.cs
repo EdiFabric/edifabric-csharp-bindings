@@ -7,3 +7,8 @@ Console.WriteLine($"loaded {loaded}");
 if (!loaded.Contains($"{Path.DirectorySeparatorChar}runtimes{Path.DirectorySeparatorChar}"))
     throw new InvalidOperationException($"Expected the library from the package's runtimes folder, got {loaded}");
 Console.WriteLine($"GetAppVersion -> {version}");
+
+// The license check uses OpenSSL on Linux, which loading alone doesn't.
+var serial = Environment.GetEnvironmentVariable("EDIFABRIC_SERIAL");
+EdiFabricX12.EnsureToken(string.IsNullOrEmpty(serial) ? "bd96a836feca45cb91c86ee65d281f52" : serial, 3600);
+Console.WriteLine("EnsureToken -> ok");
